@@ -22,7 +22,9 @@ class Nick:
     def __init__(self):
         self.x, self.y = 0, 100
         self.frame = 0
+        self.jframe = 0
         self.dir, self.face_dir = 0, 1
+        self.ver = 0
         self.jump = 0
         self.attack = 0
         self.image = load_image('Nick.png')
@@ -31,12 +33,18 @@ class Nick:
 
     def update(self):
         self.frame = (self.frame + 1) % 3
+        self.jframe = (self.jframe + 1) % 4
         self.x += self.dir * 1
         self.x = clamp(0, self.x, MAP_WIDTH * MAP_SIZE)
-        # self.y += self.dir * 1
+        self.y += self.ver * 1
+        self.y = clamp(100, self.y, MAP_HEIGHT * MAP_SIZE)
 
     def draw(self):
-        if self.dir == -1:
+        if self.jump == 1 and self.face_dir == -1:
+            self.image.clip_draw(75 + (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+        elif self.jump == 1 and self.face_dir == 1:
+            self.image.clip_draw(225 - (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+        elif self.dir == -1:
             self.image.clip_draw(21 + (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
         elif self.dir == 1:
             self.image.clip_draw(279 - (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
@@ -47,8 +55,6 @@ class Nick:
             else:
                 self.image.clip_draw(1, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
 
-        # if self.jump == 1:
-        #     self.image.clip_draw(75 + (self.frame * 17), 236, 46, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
 
 
 def handle_events():
@@ -65,10 +71,14 @@ def handle_events():
                     nick.dir -= 1
                 case pico2d.SDLK_RIGHT:
                     nick.dir += 1
-                # case pico2d.SDLK_LALT:
-                #     nick.jump == 1
-                # case pico2d.SDLK_LCTRL:
-                #     nick.attack = 1
+                case pico2d.SDLK_LALT:
+                    nick.jump = 1
+                    delay(0.05)
+                    nick.ver += 1
+                case pico2d.SDLK_LCTRL:
+                    nick.attack = 1
+                case pico2d.SDLK_DOWN:
+                    nick.ver -= 2
         elif event.type == SDL_KEYUP:
             match event.key:
                 case pico2d.SDLK_LEFT:
@@ -77,8 +87,11 @@ def handle_events():
                 case pico2d.SDLK_RIGHT:
                     nick.dir -= 1
                     nick.face_dir = 1
-                # case pico2d.SDLK_LALT:
-                #     nick.jump -= 1
+                case pico2d.SDLK_LALT:
+                    nick.jump = 0
+                    nick.ver -= 1
+                case pico2d.SDLK_DOWN:
+                    nick.ver += 2
 
 
 
