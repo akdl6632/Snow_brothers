@@ -5,8 +5,8 @@ import title_state
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
-
 x = 0
+
 
 class Map:
     def __init__(self):
@@ -18,29 +18,126 @@ class Map:
         self.image.clip_draw(1, 18, 256, 223, MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH * MAP_SIZE, MAP_HEIGHT * MAP_SIZE)
 
 
+class RedDemon:
+    def __init__(self):
+        self.x, self.y = 640, 825
+        self.frame = 0
+        # self.jframe = 0
+        self.dir, self.face_dir = 1, 1
+        self.ver = 0
+        self.jump = 0
+        self.attack = 0
+        self.image = load_image('Enemies.png')
+
+    def update(self):
+        self.frame = (self.frame + 1) % 2
+        self.x += self.dir * 1
+        if self.x > 960:
+            self.x = 960
+            self.dir = -1
+            self.face_dir = -1
+        elif self.x < 325:
+            self.x = 325
+            self.dir = 1
+            self.face_dir = 1
+        # self.x = clamp(325, self.x, 960)
+        # self.y += self.ver * 1
+        # self.y = clamp(100, self.y, MAP_HEIGHT * MAP_SIZE)
+
+    def draw(self):
+        if self.dir == -1:
+            self.image.clip_draw(29 + (self.frame * 25), 526, 24, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)  # 왼쪽 이동
+        elif self.dir == 1:
+            self.image.clip_draw(477 - (self.frame * 25), 526, 24, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)  # 오른쪽 이동
+        else:
+            # self.image.clip_draw IDLE
+            if self.face_dir == 1:
+                self.image.clip_draw(505, 526, 23, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)
+            else:
+                self.image.clip_draw(1, 526, 23, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)
+
+
+# class attack:
+#     def __init__(self):
+#         self.x, self.y = 0, 100
+#         self.frame = 0
+#         self.jframe = 0
+#         self.aframe = 0
+#         self.aver = 0
+#         self.dir, self.face_dir = 0, 1
+#         self.ver = 0
+#         self.jump = 0
+#         self.attack = 0
+#         self.image = load_image('Nick.png')
+#
+#     def update(self):
+#         self.frame = (self.frame + 1) % 2
+#         self.x += self.dir * 1
+#         self.y += self.ver * 1
+#         if self.aver == 5:
+#             self.aver = 0
+#
+#     def draw(self):
+#         if self.attack == 1 and self.face_dir == -1:
+#             self.image.clip_draw(26 - (self.aframe * 25), 200, 15 + (self.aframe * 9), 23, self.x, self.y,
+#                                  15 + (self.aframe * 9) * 2.5, 23 * 2.5)
+#             if self.aver < 5:
+#                 self.image.clip_draw(109 + (self.aframe * 9), 200, 8, 23, self.x - (self.aver + 50), self.y, 8 * 2.5,
+#                                      23 * 2.5)
+#         elif self.attack == 1 and self.face_dir == 1:
+#             self.image.clip_draw(274 + (self.aframe * 17), 200, 15 + (self.aframe * 9), 23, self.x, self.y,
+#                                  15 + (self.aframe * 9) * 2.5, 23 * 2.5)
+#             if self.aver < 3:
+#                 self.image.clip_draw(190 + (self.aframe * 9), 200, 8, 23, self.x + (self.aver + 50), self.y, 8 * 2.5,
+#                                      23 * 2.5)
+#         elif self.jump == 1 and self.face_dir == -1:
+#             self.image.clip_draw(75 + (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+#         elif self.jump == 1 and self.face_dir == 1:
+#             self.image.clip_draw(225 - (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+#         elif self.dir == -1:
+#             self.image.clip_draw(21 + (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
+#         elif self.dir == 1:
+#             self.image.clip_draw(279 - (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
+#         else:
+#             # self.image.clip_draw IDLE
+#             if self.face_dir == 1:
+#                 self.image.clip_draw(299, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
+#             else:
+#                 self.image.clip_draw(1, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
+
+
 class Nick:
     def __init__(self):
         self.x, self.y = 0, 100
         self.frame = 0
         self.jframe = 0
+        self.aframe = 0
+        self.aver = 0
         self.dir, self.face_dir = 0, 1
         self.ver = 0
         self.jump = 0
         self.attack = 0
         self.image = load_image('Nick.png')
-        self.item = None
-
 
     def update(self):
         self.frame = (self.frame + 1) % 3
         self.jframe = (self.jframe + 1) % 4
+        self.aframe = (self.aframe + 1) % 2
         self.x += self.dir * 1
-        self.x = clamp(0, self.x, MAP_WIDTH * MAP_SIZE)
         self.y += self.ver * 1
-        self.y = clamp(100, self.y, MAP_HEIGHT * MAP_SIZE)
+        self.x = clamp(0, self.x, 1280)
+        self.y = clamp(100, self.y, 1115)
+        if self.attack == 1:
+            self.aver += 1
 
     def draw(self):
-        if self.jump == 1 and self.face_dir == -1:
+        if self.attack == 1 and self.face_dir == -1:
+            self.image.clip_draw(26 - (self.aframe * 25), 200, 15 + (self.aframe * 9), 23, self.x, self.y, 15 + (self.aframe * 9) * 2.5, 23 * 2.5)
+            self.image.clip_draw(109 + (self.aframe * 9), 200, 8, 23, self.x - (self.aver), self.y, 8 * 2.5, 23 * 2.5)
+        elif self.attack == 1 and self.face_dir == 1:
+            self.image.clip_draw(274 + (self.aframe * 17), 200, 15 + (self.aframe * 9), 23, self.x, self.y,  15 + (self.aframe * 9) * 2.5, 23 * 2.5)
+            self.image.clip_draw(190 + (self.aframe * 9), 200, 8, 23, self.x + (self.aver), self.y, 8 * 2.5, 23 * 2.5)
+        elif self.jump == 1 and self.face_dir == -1:
             self.image.clip_draw(75 + (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
         elif self.jump == 1 and self.face_dir == 1:
             self.image.clip_draw(225 - (self.jframe * 17), 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
@@ -54,7 +151,6 @@ class Nick:
                 self.image.clip_draw(299, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
             else:
                 self.image.clip_draw(1, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)
-
 
 
 def handle_events():
@@ -89,33 +185,46 @@ def handle_events():
                     nick.face_dir = 1
                 case pico2d.SDLK_LALT:
                     nick.jump = 0
-                    nick.ver -= 1
+                    if nick.ver > 0:
+                        nick.ver -= 1
+                    else:
+                        nick.ver = 0
+                case pico2d.SDLK_LCTRL:
+                    nick.attack = 0
+                    nick.aver = 0
                 case pico2d.SDLK_DOWN:
                     nick.ver += 2
 
 
-
-
 nick = None
-grass = None
+map = None
 running = True
+radDemon = None
+
 
 def enter():
-    global nick, map, running
+    global nick, map, running, redDemon
     nick = Nick()
     map = Map()
+    redDemon = RedDemon()
     running = True
 
+
 def exit():
-    global nick, map
+    global nick, map, redDemon
     del nick
     del map
+    del redDemon
+
 
 def update():
     nick.update()
+    redDemon.update()
+
 
 def draw():
     clear_canvas()
     map.draw()
     nick.draw()
+    redDemon.draw()
     update_canvas()

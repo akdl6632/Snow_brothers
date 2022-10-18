@@ -34,7 +34,7 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2)
+    image.clip_draw(0, 0, 800, 600, MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH * MAP_SIZE, MAP_HEIGHT * MAP_SIZE)
     update_canvas()
 
 def handle_events():

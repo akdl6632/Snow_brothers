@@ -26,11 +26,11 @@ def handle_events():
         elif event.type == SDL_QUIT:
             game_framework.quit()
         elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_ESCAPE):
-            game_framework.change_state(logo_state)
+            game_framework.quit()
 
 def draw():
     clear_canvas()
-    image.draw(MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH, MAP_HEIGHT)
+    image.clip_draw(0, 0, 269, 192, MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH * MAP_SIZE, MAP_HEIGHT * MAP_SIZE)
     update_canvas()
 
 def update():
