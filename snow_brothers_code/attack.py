@@ -25,14 +25,21 @@ class Attack:
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         self.x += self.face_dir * ATTACK_SPEED_PPS * game_framework.frame_time
 
+        # 공격이 일정 범위 이상 이동하면 삭제되도록 설정
         if self.x < 25 or self.x > 1280 - 25:
             game_world.remove_object(self)
 
     def draw(self):
         if self.face_dir == -1:
-            self.image.clip_draw(118, 200, 8, 23, self.x - 40, self.y, 8 * 2.5, 23 * 2.5)
-        else:
-            self.image.clip_draw(190, 200, 8, 23, self.x + 40, self.y, 8 * 2.5, 23 * 2.5)
+            if int(self.frame) == 0:
+                self.image.clip_draw(118, 200, 8, 23, self.x - 40, self.y, 8 * 2.5, 23 * 2.5)
+            else:
+                self.image.clip_draw(110, 210, 6, 11, self.x - 40, self.y, 6 * 2.5, 11 * 2.5)
+        elif self.face_dir == 1:
+            if int(self.frame) == 0:
+                self.image.clip_draw(190, 200, 8, 23, self.x + 40, self.y, 8 * 2.5, 23 * 2.5)
+            else:
+                self.image.clip_draw(200, 210, 6, 11, self.x - 40, self.y, 6 * 2.5, 11 * 2.5)
 
         # if self.attack == 1 and self.face_dir == -1:
         #     self.image.clip_draw(26 - (self.aframe * 25), 200, 15 + (self.aframe * 9), 23, self.x, self.y, 15 + (self.aframe * 9) * 2.5, 23 * 2.5)

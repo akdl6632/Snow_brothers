@@ -37,7 +37,7 @@ class IDLE:
     def enter(self,event):
         print('ENTER IDLE')
         self.dir = 0
-        self.timer = 1000
+        self.timer = 100
 
     @staticmethod
     def exit(self, event):
@@ -81,8 +81,14 @@ class RUN:
             self.fire_snow()
 
     def do(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
-        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        # 이걸 써서 clip_draw가 깨짐
+        # self.frame = int(self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3를 쓰면  안깨지는데 모션이 안바뀜
+        # self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+        # self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        # 이거 쓰면 안깨지는데 느리고 모션이 빨리 바뀜
+        # self.frame = int(self.frame + 1) % 3
+        # self.x += self.dir * 1
+
         self.x = clamp(0, self.x, 1280)
 
     def draw(self):
@@ -90,11 +96,36 @@ class RUN:
             self.image.clip_draw(21 + int(self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
         elif self.dir == 1:
             self.image.clip_draw(279 - int(self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
-            print(f'self.frame = {self.frame}')
+        # if self.dir == -1:
+        #     self.image.clip_draw(21 + (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
+        # elif self.dir == 1:
+        #     self.image.clip_draw(279 - (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
+
+class DO_ATTACK:
+    def enter(self, event):
+        print('ENTER ATTACK')
+
+    def exit(self, event):
+        print('EXIT RUN')
+        self.face_dir = self.dir
+        if event == ATTACK:
+            self.fire_snow()
+
+    def do(self):
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.x = clamp(0, self.x, 1280)
+
+    def draw(self):
+        if self.face_dir == -1:
+            self.image.clip_draw(26, 200, 15, 23, self.x, self.y, 15 * 2.5, 23 * 2.5)
+        elif self.face_dir == 1:
+            self.image.clip_draw(274, 200, 15, 23, self.x, self.y, 15 * 2.5, 23 * 2.5)
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, ATTACK: IDLE},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: RUN}
+    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK},
+    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: DO_ATTACK},
+    DO_ATTACK: {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK}
 }
 
 class Nick:
@@ -138,12 +169,10 @@ class Nick:
         print('FIRE SNOW')
         if self.face_dir == -1:
             attack = Attack(self.x, self.y, self.face_dir)
-            game_world.add_object(attack, 1)
         else:
             attack = Attack(self.x, self.y, self.face_dir)
-            game_world.add_object(attack, 1)
 
-        # game_world.add_object(attack, 1)
+        game_world.add_object(attack, 1)
 
 
 # def handle_events():
