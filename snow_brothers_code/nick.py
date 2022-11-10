@@ -136,8 +136,14 @@ class Nick:
 
     def fire_snow(self):
         print('FIRE SNOW')
-        attack = Attack(self.x, self.y, self.face_dir*2)
-        game_world.add_object(attack, 1)
+        if self.face_dir == -1:
+            attack = Attack(self.x, self.y, self.face_dir)
+            game_world.add_object(attack, 1)
+        else:
+            attack = Attack(self.x, self.y, self.face_dir)
+            game_world.add_object(attack, 1)
+
+        # game_world.add_object(attack, 1)
 
 
 # def handle_events():
