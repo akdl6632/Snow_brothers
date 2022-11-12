@@ -83,8 +83,8 @@ class RUN:
     def do(self):
         # 이걸 써서 clip_draw가 깨짐
         # self.frame = int(self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3를 쓰면  안깨지는데 모션이 안바뀜
-        # self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
-        # self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         # 이거 쓰면 안깨지는데 느리고 모션이 빨리 바뀜
         # self.frame = int(self.frame + 1) % 3
         # self.x += self.dir * 1
@@ -93,9 +93,9 @@ class RUN:
 
     def draw(self):
         if self.dir == -1:
-            self.image.clip_draw(21 + int(self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
+            self.image.clip_draw(21 + int(self.frame) * 17, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
         elif self.dir == 1:
-            self.image.clip_draw(279 - int(self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
+            self.image.clip_draw(279 - int(self.frame) * 17, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 오른쪽 이동
         # if self.dir == -1:
         #     self.image.clip_draw(21 + (self.frame * 17), 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
         # elif self.dir == 1:
