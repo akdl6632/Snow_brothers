@@ -14,3 +14,7 @@ class Map:
     # 필드 내 모든적을 잡으면 y값을 증가 시켜서 다음 맵 출력
     def draw(self):
         self.image.clip_draw(1, 18, 256, 223, MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH * MAP_SIZE, MAP_HEIGHT * MAP_SIZE)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return 0, 0, 256 * 5, 70
