@@ -4,6 +4,8 @@ import game_framework
 import game_world
 from attack import Attack
 
+import time
+
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
 
@@ -17,9 +19,22 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
+JUMP_SPEED_KMPH = 20.0
+JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
+JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
+JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
 
+JUMP_PER_TIME = 1.0 / TIME_PER_ACTION
 
-RD, LD, RU, LU, TIMER, ATTACK, AU, AD = range(8)
+frame_time = 0.5
+current_time = time.time()
+
+# 점프 최댓값
+JUMP_MAX = 230
+JUMP_Y = 0.0
+Is_JUMP = False
+
+RD, LD, RU, LU, TIMER, ATTACK, AU, AD, GO_IDLE = range(9)
 event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'ATTACK', 'AU', 'AD']
 
 key_event_table = {
@@ -34,12 +49,12 @@ key_event_table = {
 
 class IDLE:
     @staticmethod
-    def enter(self,event):
+    def enter(self, event):
         print('ENTER IDLE')
         self.dir = 0
         self.timer = 100
-        if event == AU:
-            self.dir -= 1
+        # if event == AU:
+        #     self.dir -= 1
 
     @staticmethod
     def exit(self, event):
@@ -49,12 +64,9 @@ class IDLE:
 
     @staticmethod
     def do(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time)
-        self.timer -= 1
-        if self.timer == 0:
-            self.add_event(TIMER)
-        if self.y != 70:
-            self.y += self.dir
+        # IDLE state 때 이미지 변화 없음
+        # 그냥 키를 때면 IDLE 상태가 됨
+        pass
 
 
     @staticmethod
@@ -101,15 +113,20 @@ class DO_ATTACK:
         print('ENTER ATTACK')
 
     def exit(self, event):
-        print('EXIT RUN')
+        print('EXIT ATTACK')
         self.face_dir = self.dir
         if event == ATTACK:
             self.fire_snow()
 
     def do(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
+        self.frame = (self.frame + FRAMES_PER_ACTION * JUMP_PER_TIME * game_framework.frame_time) % 2
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1280)
+
+        if self.frame >= 1.95:
+            self.add_event(GO_IDLE)
+
+        print(f'{self.frame}')
 
     def draw(self):
         if self.face_dir == -1:
@@ -121,10 +138,28 @@ class DO_ATTACK:
 class JUMP:
     def enter(self, event):
         print('ENTER JUNP')
-        if event == AD:
+
+        # 점프 누르고 이동을 위해 구현
+        if event == RD:
             self.dir += 1
-        elif event == AD:
+        elif event == LD:
             self.dir -= 1
+        elif event == RU:
+            self.dir -= 1
+        elif event == LU:
+            self.dir += 1
+        # global current_time
+        # global frame_time
+        # # 0.5초 체공
+        # frame_time = 0.5
+        # # frame_rate = 1 / frame_time
+        # # current_time += frame_time
+
+        global JUMP_Y
+        JUMP_Y = 0.0
+
+        global Is_JUMP
+        Is_JUMP = True
 
     def exit(self, event):
         print('EXIT JUMP')
@@ -132,22 +167,58 @@ class JUMP:
         if event == ATTACK:
             self.fire_snow()
     def do(self):
-        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
-        self.y += self.dir * RUN_SPEED_PPS * game_framework.frame_time
-        print(f'{self.y}')
+        # 한번 누르면 일정시간 비행 후 낙하.
+        # 시간
+        # global current_time
+        # global frame_time
+        #
+        # frame_time = time.time() - current_time
+        # frame_rate = 1 / frame_time
+        # current_time += frame_time
+        # print(f'frame time is = {frame_time}')
+        # 어떻게 하는지 모르겠다
+        # 그냥 최대 점프 범위 설정하고 그만큼만 뛰게 하자
+
+        global JUMP_Y
+        global Is_JUMP
+        # if JUMP_Y < JUMP_MAX and Is_JUMP:
+
+        # print(f'JUMP_Y is {JUMP_Y}')
+        if JUMP_Y >= JUMP_MAX: # 최대 범위를 넘어가면 점프 그만.
+            Is_JUMP = False
+            # Nick.add_event(IDLE)
+            self.add_event(GO_IDLE)
+
+        elif Is_JUMP: # 점프키가 눌렸다면 점프하게 구현
+            JUMP_Y += 0.5
+            self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
+            if self.face_dir == 1:
+                self.y += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+            elif self.face_dir == -1:
+                self.y -= self.dir * RUN_SPEED_PPS * game_framework.frame_time
+
+        self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
+        self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+
+        self.x = clamp(0, self.x, 1280)
+
+        # print(f'self.y is = {self.y}')
+        # print(f'self.frame is = {self.frame}')
+        # print(f'self.face_dir is = {self.face_dir}')
+        # print(f'JUMP_Y is = {JUMP_Y}')
     def draw(self):
         if self.face_dir == -1:
             self.image.clip_draw(75 + int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-            print('그려지는중')
+            # print('그려지는중')
         elif self.face_dir == 1:
             self.image.clip_draw(225 - int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-            print('그려지는중')
+            # print('그려지는중')
 
 next_state = {
-    IDLE:  {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK, AD: JUMP},
+    IDLE:  {RU: IDLE,  LU: IDLE,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK, AD: JUMP},
     RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: DO_ATTACK, AD: JUMP},
-    DO_ATTACK: {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: DO_ATTACK, AD: JUMP},
-    JUMP: {RU: RUN,  LU: RUN,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK, AU: IDLE}
+    DO_ATTACK: {RU: IDLE, LU: IDLE, RD: JUMP, LD: IDLE, ATTACK: DO_ATTACK, AU: IDLE, GO_IDLE: IDLE},
+    JUMP: {RU: RUN,  LU: RUN,  RD: JUMP,  LD: JUMP, ATTACK: DO_ATTACK, GO_IDLE: IDLE},
 }
 
 class Nick:
