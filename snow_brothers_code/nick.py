@@ -33,6 +33,7 @@ current_time = time.time()
 JUMP_MAX = 230
 JUMP_Y = 0.0
 Is_JUMP = False
+Is_Meet_Wall = True
 
 RD, LD, RU, LU, TIMER, ATTACK, AU, AD, GO_IDLE = range(9)
 event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'ATTACK', 'AU', 'AD']
@@ -51,14 +52,23 @@ class IDLE:
     @staticmethod
     def enter(self, event):
         print('ENTER IDLE')
+        print(f'{self.dir, self.face_dir}')
         self.dir = 0
         self.timer = 100
+
+        global Is_Meet_Wall
+        print(Is_Meet_Wall)
+
+        if self.y > 100:
+            Is_Meet_Wall = False
         # if event == AU:
         #     self.dir -= 1
 
     @staticmethod
     def exit(self, event):
         print('EXIT IDLE')
+        # self.face_dir = self.dir
+        print(self.face_dir)
         if event == ATTACK:
             self.fire_snow()
 
@@ -66,7 +76,15 @@ class IDLE:
     def do(self):
         # IDLE state 때 이미지 변화 없음
         # 그냥 키를 때면 IDLE 상태가 됨
-        pass
+        # print(Is_Meet_Wall)
+        global Is_Meet_Wall
+
+        # if self.y < 100:
+        #     Is_Meet_Wall = True
+        #
+        # if Is_Meet_Wall == False:
+        #     self.y -= 0.5
+        # pass
 
 
     @staticmethod
@@ -81,6 +99,7 @@ class IDLE:
 class RUN:
     def enter(self, event):
         print('ENTER RUN')
+        print(f'{self.face_dir}')
         if event == RD:
             self.dir += 1
         elif event == LD:
@@ -89,6 +108,11 @@ class RUN:
             self.dir -= 1
         elif event == LU:
             self.dir += 1
+
+        global Is_Meet_Wall
+
+        # if self.y > 100:
+        #     Is_Meet_Wall = False
 
     def exit(self, event):
         print('EXIT RUN')
@@ -102,6 +126,14 @@ class RUN:
 
         self.x = clamp(0, self.x, 1280)
 
+        # global Is_Meet_Wall
+        #
+        # if self.y < 100:
+        #     Is_Meet_Wall = True
+        #
+        # if Is_Meet_Wall == False:
+        #     self.y -= 1
+
     def draw(self):
         if self.dir == -1:
             self.image.clip_draw(21 + int(self.frame) * 17, 236, 16, 26, self.x, self.y, 16 * 2.5, 26 * 2.5)  # 왼쪽 이동
@@ -111,10 +143,11 @@ class RUN:
 class DO_ATTACK:
     def enter(self, event):
         print('ENTER ATTACK')
+        print(f'{self.face_dir}')
+        self.frame = 0
 
     def exit(self, event):
         print('EXIT ATTACK')
-        self.face_dir = self.dir
         if event == ATTACK:
             self.fire_snow()
 
@@ -123,7 +156,7 @@ class DO_ATTACK:
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
         self.x = clamp(0, self.x, 1280)
 
-        if self.frame >= 1.95:
+        if self.frame >= 1.5:
             self.add_event(GO_IDLE)
 
         print(f'{self.frame}')
@@ -138,6 +171,7 @@ class DO_ATTACK:
 class JUMP:
     def enter(self, event):
         print('ENTER JUNP')
+        print(f'{self.face_dir, self.dir}')
 
         # 점프 누르고 이동을 위해 구현
         if event == RD:
@@ -159,13 +193,17 @@ class JUMP:
         JUMP_Y = 0.0
 
         global Is_JUMP
-        Is_JUMP = True
+        if Is_JUMP == False:
+            Is_JUMP = True
 
     def exit(self, event):
         print('EXIT JUMP')
-        self.face_dir = self.dir
         if event == ATTACK:
             self.fire_snow()
+
+        global Is_JUMP
+        Is_JUMP = False
+
     def do(self):
         # 한번 누르면 일정시간 비행 후 낙하.
         # 시간
@@ -181,44 +219,50 @@ class JUMP:
 
         global JUMP_Y
         global Is_JUMP
+
         # if JUMP_Y < JUMP_MAX and Is_JUMP:
 
-        # print(f'JUMP_Y is {JUMP_Y}')
         if JUMP_Y >= JUMP_MAX: # 최대 범위를 넘어가면 점프 그만.
-            Is_JUMP = False
+            # Is_JUMP = False
             # Nick.add_event(IDLE)
             self.add_event(GO_IDLE)
 
-        elif Is_JUMP: # 점프키가 눌렸다면 점프하게 구현
+        if Is_JUMP: # 점프키가 눌렸다면 점프하게 구현
             JUMP_Y += 0.5
+
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
             if self.face_dir == 1:
-                self.y += self.dir * RUN_SPEED_PPS * game_framework.frame_time
+                self.y += 1 * RUN_SPEED_PPS * game_framework.frame_time
             elif self.face_dir == -1:
-                self.y -= self.dir * RUN_SPEED_PPS * game_framework.frame_time
+                self.y -= -1 * RUN_SPEED_PPS * game_framework.frame_time
 
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
 
         self.x = clamp(0, self.x, 1280)
 
+        # print(f'JUMP_Y is {JUMP_Y, self.y}')
+
         # print(f'self.y is = {self.y}')
         # print(f'self.frame is = {self.frame}')
         # print(f'self.face_dir is = {self.face_dir}')
         # print(f'JUMP_Y is = {JUMP_Y}')
     def draw(self):
-        if self.face_dir == -1:
-            self.image.clip_draw(75 + int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-            # print('그려지는중')
-        elif self.face_dir == 1:
-            self.image.clip_draw(225 - int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-            # print('그려지는중')
+        global Is_JUMP
+        if Is_JUMP:
+            # print(Is_JUMP, self.face_dir)
+            if self.face_dir == -1:
+                self.image.clip_draw(75 + int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+                print('그려지는중')
+            elif self.face_dir == 1:
+                self.image.clip_draw(225 - int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
+                print('그려지는중')
 
 next_state = {
     IDLE:  {RU: IDLE,  LU: IDLE,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK, AD: JUMP},
     RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: DO_ATTACK, AD: JUMP},
-    DO_ATTACK: {RU: IDLE, LU: IDLE, RD: JUMP, LD: IDLE, ATTACK: DO_ATTACK, AU: IDLE, GO_IDLE: IDLE},
-    JUMP: {RU: RUN,  LU: RUN,  RD: JUMP,  LD: JUMP, ATTACK: DO_ATTACK, GO_IDLE: IDLE},
+    DO_ATTACK: {RU: IDLE, LU: IDLE, RD: RUN, LD: RUN, ATTACK: DO_ATTACK, AU: IDLE, GO_IDLE: IDLE},
+    JUMP: {RU: JUMP,  LU: JUMP, AU: JUMP,  RD: JUMP,  LD: JUMP, ATTACK: DO_ATTACK, GO_IDLE: IDLE},
 }
 
 class Nick:
@@ -245,6 +289,14 @@ class Nick:
             except KeyError:
                 print(f'ERROR: State {self.cur_state.__name__}    Event {event_name[event]}')
             self.cur_state.enter(self, event)
+
+        global Is_Meet_Wall
+
+        if self.y < 100:
+            Is_Meet_Wall = True
+
+        if Is_Meet_Wall == False:
+            self.y -= 0.5
 
     def draw(self):
         self.cur_state.draw(self)
