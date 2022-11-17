@@ -6,9 +6,13 @@ import game_world
 
 from nick import Nick
 from map import Map
+from enimies import RedDemon
 
 nick = None
 map = None
+# enimies = None
+RedDemons = []
+
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
@@ -32,7 +36,12 @@ def enter():
     map = Map()
     game_world.add_object(map, 0)
     game_world.add_object(nick, 1)
+    global RedDemons
+    RedDemons = [RedDemon() for i in range(10)]
+    game_world.add_objects(RedDemons, 1)
 
+    # game_world.add_collision_pairs(nick, RedDemons, 'nick:enimies')
+    game_world.add_collision_pairs(None, RedDemons, 'attack:enimies')
 
 # 종료
 def exit():
@@ -42,6 +51,15 @@ def update():
     for game_object in game_world.all_objects():
         game_object.update()
     # delay(0.01)
+
+    for a, b, group in game_world.all_collision_pairs():
+        if collide(a, b):
+            print('COLLISION ', group)
+            print(a, b, group)
+            a.handle_collision(b, group)
+            b.handle_collision(a, group)
+
+    # print(game_world.collision_group)
 
 def draw_world():
     for game_object in game_world.all_objects():
@@ -58,7 +76,16 @@ def pause():
 def resume():
     pass
 
+def collide(a, b):
+    left_a, bottom_a, right_a, top_a = a.get_bb()
+    left_b, bottom_b, right_b, top_b = b.get_bb()
 
+    if left_a > right_b: return False
+    if right_a < left_b: return False
+    if top_a < bottom_b: return False
+    if bottom_a > top_b: return False
+
+    return True
 
 
 def test_self():
@@ -82,44 +109,7 @@ if __name__ == '__main__':
 #         self.image.clip_draw(1, 18, 256, 223, MAP_WIDTH * MAP_SIZE // 2, MAP_HEIGHT * MAP_SIZE // 2, MAP_WIDTH * MAP_SIZE, MAP_HEIGHT * MAP_SIZE)
 #
 #
-# class RedDemon:
-#     def __init__(self):
-#         self.x, self.y = 640, 825
-#         self.frame = 0
-#         # self.jframe = 0
-#         self.dir, self.face_dir = 1, 1
-#         self.ver = 0
-#         self.jump = 0
-#         self.attack = 0
-#         self.image = load_image('Enemies.png')
-#
-#     def update(self):
-#         self.frame = (self.frame + 1) % 2
-#         self.x += self.dir * 1
-#         if self.x > 960:
-#             self.x = 960
-#             self.dir = -1
-#             self.face_dir = -1
-#         elif self.x < 325:
-#             self.x = 325
-#             self.dir = 1
-#             self.face_dir = 1
-#         # self.x = clamp(325, self.x, 960)
-#         # self.y += self.ver * 1
-#         # self.y = clamp(100, self.y, MAP_HEIGHT * MAP_SIZE)
-#
-#     def draw(self):
-#         if self.dir == -1:
-#             self.image.clip_draw(29 + (self.frame * 25), 526, 24, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)  # 왼쪽 이동
-#         elif self.dir == 1:
-#             self.image.clip_draw(477 - (self.frame * 25), 526, 24, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)  # 오른쪽 이동
-#         else:
-#             # self.image.clip_draw IDLE
-#             if self.face_dir == 1:
-#                 self.image.clip_draw(505, 526, 23, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)
-#             else:
-#                 self.image.clip_draw(1, 526, 23, 26, self.x, self.y, 24 * 2.5, 26 * 2.5)
-#
+
 #
 # # class attack:
 # #     def __init__(self):

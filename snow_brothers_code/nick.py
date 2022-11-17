@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 import game_world
 from attack import Attack
+from enimies import RedDemon
 
 import time
 
@@ -35,7 +36,7 @@ JUMP_Y = 0.0
 Is_JUMP = False
 Is_Meet_Wall = True
 
-RD, LD, RU, LU, TIMER, ATTACK, AU, AD, GO_IDLE = range(9)
+RD, LD, RU, LU, TIMER, ATTACK, AU, AD, GO_IDLE, GO_RUN = range(10)
 event_name = ['RD', 'LD', 'RU', 'LU', 'TIMER', 'ATTACK', 'AU', 'AD']
 
 key_event_table = {
@@ -159,7 +160,7 @@ class DO_ATTACK:
         if self.frame >= 1.5:
             self.add_event(GO_IDLE)
 
-        print(f'{self.frame}')
+        # print(f'{self.frame}')
 
     def draw(self):
         if self.face_dir == -1:
@@ -226,6 +227,7 @@ class JUMP:
             # Is_JUMP = False
             # Nick.add_event(IDLE)
             self.add_event(GO_IDLE)
+            # self.add_event(GO_RUN)
 
         if Is_JUMP: # 점프키가 눌렸다면 점프하게 구현
             JUMP_Y += 0.5
@@ -253,16 +255,16 @@ class JUMP:
             # print(Is_JUMP, self.face_dir)
             if self.face_dir == -1:
                 self.image.clip_draw(75 + int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-                print('그려지는중')
+                # print('그려지는중')
             elif self.face_dir == 1:
                 self.image.clip_draw(225 - int(self.frame) * 17, 236, 16, 36, self.x, self.y, 16 * 2.5, 36 * 2.5)
-                print('그려지는중')
+                # print('그려지는중')
 
 next_state = {
     IDLE:  {RU: IDLE,  LU: IDLE,  RD: RUN,  LD: RUN, ATTACK: DO_ATTACK, AD: JUMP},
-    RUN:   {RU: IDLE, LU: IDLE, RD: IDLE, LD: IDLE, ATTACK: DO_ATTACK, AD: JUMP},
+    RUN:   {RU: IDLE, LU: IDLE, RD: RUN, LD: RUN, ATTACK: DO_ATTACK, AD: JUMP},
     DO_ATTACK: {RU: IDLE, LU: IDLE, RD: RUN, LD: RUN, ATTACK: DO_ATTACK, AU: IDLE, GO_IDLE: IDLE},
-    JUMP: {RU: JUMP,  LU: JUMP, AU: JUMP,  RD: JUMP,  LD: JUMP, ATTACK: DO_ATTACK, GO_IDLE: IDLE},
+    JUMP: {RU: JUMP, LU: JUMP, AU: JUMP, RD: RUN, LD: RUN, ATTACK: DO_ATTACK, GO_IDLE: IDLE, GO_RUN: RUN},
 }
 
 class Nick:
@@ -318,14 +320,16 @@ class Nick:
         #     print(type(attack))
         # else:
         attack = Attack(self.x, self.y, self.face_dir)
-
         game_world.add_object(attack, 1)
+        print(game_world.all_objects())
+        game_world.add_collision_pairs(attack, None, 'attack:enimies')
 
     def get_bb(self):
         return self.x - 19, self.y - 33, self.x + 19, self.y + 33
 
     def handle_collision(self, other, group):
-        pass
+        if group == 'nick:enimies':
+            game_world.remove_object(self)
 
 
 # def handle_events():
