@@ -7,11 +7,24 @@ import game_world
 from nick import Nick
 from map import Map
 from enimies import RedDemon
+from bosses import Boss2
 
 nick = None
 map = None
+
+Nick_kill = 0
+stage = 1
+
 # enimies = None
 RedDemons = []
+Boss = []
+
+
+RedDemonlist = dict()
+RedDemonlist = {1: 10, 2: 5}
+
+Bosslist = dict()
+Bosslist = {1: 0, 2: 1}
 
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
@@ -36,12 +49,18 @@ def enter():
     map = Map()
     game_world.add_object(map, 0)
     game_world.add_object(nick, 1)
-    global RedDemons
-    RedDemons = [RedDemon() for i in range(10)]
+    global RedDemons, Boss
+    global stage
+    # RedDemons = [RedDemon() for i in range(10)]
+    RedDemons = [RedDemon() for i in range(RedDemonlist[stage])]
     game_world.add_objects(RedDemons, 1)
+
+    Boss = [Boss2() for i in range(Bosslist[stage])]
+    game_world.add_objects(Boss, 1)
 
     # game_world.add_collision_pairs(nick, RedDemons, 'nick:enimies')
     game_world.add_collision_pairs(None, RedDemons, 'attack:enimies')
+    game_world.add_collision_pairs(None, Boss, 'attack:bosses')
 
 # 종료
 def exit():

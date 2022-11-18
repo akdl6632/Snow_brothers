@@ -1,6 +1,7 @@
 from pico2d import *
 import game_framework
 import game_world
+import bosses
 
 PIXEL_PER_METER = (10.0 / 0.3)
 ATTACK_SPEED_KMPH = 40.0
@@ -66,3 +67,7 @@ class Attack:
     def handle_collision(self, other, group):
         if group == 'attack:enimies':
             game_world.remove_object(self)
+
+        if group == 'attack:bosses':
+            if bosses.Boss2.self.hp <= 0:
+                game_world.remove_object(self)
