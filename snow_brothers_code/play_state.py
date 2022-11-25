@@ -7,6 +7,8 @@ import game_world
 from nick import Nick
 from map import Map
 from enimies import RedDemon
+from enimies import Frog
+from enimies import Yellow_Troll
 from bosses import Boss2
 
 nick = None
@@ -17,14 +19,26 @@ stage = 1
 
 # enimies = None
 RedDemons = []
+Frogs = []
+Yellow_Trolls = []
 Boss = []
 
 
 RedDemonlist = dict()
-RedDemonlist = {1: 10, 2: 5}
+# RedDemonlist = {1: 5, 2: 0, 3: 4, 4: 0, 5: 4, 6: 2, 7: 6, 8: 4, 9: 2}
+RedDemonlist = {1: 5, 2: 0, 3: 4, 4: 0, 5: 4, 6: 2, 7: 6, 8: 4, 9: 2}
+
+Froglist = dict()
+Froglist = {1: 0, 2: 4, 3: 0, 4: 3, 5: 1, 6: 1, 7: 0, 8: 2, 9: 2, 10: 0}
+
+Yellow_Trolllist = dict()
+Yellow_Trolllist = {1: 0, 2: 1, 3: 2, 4: 2, 5: 2, 6: 4, 7: 0, 8: 2, 9: 2, 10: 0}
+
+All_enimes = dict()
+All_enimes = {1: 5, 2: 5, 3: 6, 4: 5, 5: 7, 6: 7, 7: 6, 8: 8, 9: 6, 10: 0}
 
 Bosslist = dict()
-Bosslist = {1: 0, 2: 1}
+Bosslist = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1}
 
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
@@ -49,17 +63,27 @@ def enter():
     map = Map()
     game_world.add_object(map, 0)
     game_world.add_object(nick, 1)
-    global RedDemons, Boss
+    global Nick_kill
+    global RedDemons, Frogs, Yellow_Trolls, Boss
     global stage
+    Nick_kill = 0
     # RedDemons = [RedDemon() for i in range(10)]
     RedDemons = [RedDemon() for i in range(RedDemonlist[stage])]
     game_world.add_objects(RedDemons, 1)
+
+    Frogs = [Frog() for i in range(Froglist[stage])]
+    game_world.add_objects(Frogs, 1)
+
+    Yellow_Trolls = [Yellow_Troll() for i in range(Yellow_Trolllist[stage])]
+    game_world.add_objects(Yellow_Trolls, 1)
 
     Boss = [Boss2() for i in range(Bosslist[stage])]
     game_world.add_objects(Boss, 1)
 
     # game_world.add_collision_pairs(nick, RedDemons, 'nick:enimies')
     game_world.add_collision_pairs(None, RedDemons, 'attack:enimies')
+    game_world.add_collision_pairs(None, Frogs, 'attack:enimies')
+    game_world.add_collision_pairs(None, Yellow_Trolls, 'attack:enimies')
     game_world.add_collision_pairs(None, Boss, 'attack:bosses')
 
 # 종료
