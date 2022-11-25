@@ -10,22 +10,14 @@ map_y = 0
 
 class Map:
     def __init__(self):
-        # if play_state.stage <= 10:
-        #     self.image = load_image('stage1.png')
-        # elif play_state.stage > 10 and play_state.stage <= 20:
-        #     self.image = load_image('stage2.png')
-        # elif play_state.stage > 20 and play_state.stage <= 30:
-        #     self.image = load_image('stage3.png')
-        # else:
-        #     print('오류')
-        print('안녕')
-        print(play_state.stage)
-
-        if play_state.stage == 1:
+        if play_state.stage <= 10:
             self.image = load_image('stage1.png')
+        elif play_state.stage > 10 and play_state.stage <= 20:
+            self.image = load_image('stage2.png')
+        elif play_state.stage > 20 and play_state.stage <= 30:
+            self.image = load_image('stage3.png')
         else:
             print('오류')
-
         self.frame = 2250
 
     def update(self):
