@@ -1,12 +1,16 @@
 from pico2d import *
 import play_state
+import nick
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
 
-Blocks = []
 map_y = 0
 
+Block_SXpos = [[0, 485, 965, 245, 0, 725, 165, 325], [320, 165, 485, 965, 485, 320, 485, 965, 245]]
+Block_EXpos = [[320, 800, 1280, 1040, 560, 1280, 1120, 960], [1040, 320, 965, 1120, 965, 1040, 965, 1120, 800]]
+# Block_Ypos = [260, 260, 260, 420, 580, 580, 750, 825]
+Block_Ypos = [[235, 235, 235, 395, 555, 555, 715, 800], [235, 395, 395, 555, 555, 715, 715, 800, 800]]
 
 class Map:
     def __init__(self):
@@ -37,12 +41,20 @@ class Map:
         # return Blocks
         pass
 class Block:
-    def __init__(self, x, y, width, height):
-        self.x, self.y, self.width, self.height = x, y, width, height
+    def __init__(self, i):
+        self.sx, self.ex, self.y = Block_SXpos[play_state.stage - 1][i], Block_EXpos[play_state.stage - 1][i], Block_Ypos[play_state.stage - 1][i]
+
+    def update(self):
+        pass
+
     def draw(self):
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - self.width / 2, self.y - self.height / 2, self.x + self.width / 2, self.y + self.height / 2
+        return self.sx, self.y, self.ex, self.y
 
-    # collide 랑만 비교하기,     def handle_collision(self, other, group): 할 필요 없을 듯
+    def handle_collision(self, other, group):
+        if group == 'nick:map':
+            if nick.Is_JUMP == False:
+                play_state.nick.y = self.y + 20
+                nick.Is_Meet_Wall = True

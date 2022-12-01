@@ -3,7 +3,6 @@ from pico2d import *
 import game_framework
 import game_world
 from attack import Attack
-from enimies import RedDemon
 
 import time
 
@@ -103,9 +102,9 @@ class RUN:
         print(f'{self.face_dir}')
         if event == RD:
             self.dir += 1
-        elif event == LD:
-            self.dir -= 1
         elif event == RU:
+            self.dir -= 1
+        if event == LD:
             self.dir -= 1
         elif event == LU:
             self.dir += 1
@@ -127,13 +126,15 @@ class RUN:
 
         self.x = clamp(0, self.x, 1280)
 
-        # global Is_Meet_Wall
-        #
+        global Is_Meet_Wall
+
         # if self.y < 100:
         #     Is_Meet_Wall = True
-        #
+
         # if Is_Meet_Wall == False:
-        #     self.y -= 1
+        #     self.y -= 0.5
+        if self.y > 100:
+            self.y -= 0.5
 
     def draw(self):
         if self.dir == -1:
@@ -269,7 +270,7 @@ next_state = {
 
 class Nick:
     def __init__(self):
-        self.x,self.y = 0, 100
+        self.x, self.y = 0, 100
         self.frame = 0
         self.dir, self.face_dir = 0, 1
         self.image = load_image('Nick.png')
@@ -321,7 +322,8 @@ class Nick:
         # else:
         attack = Attack(self.x, self.y, self.face_dir)
         game_world.add_object(attack, 1)
-        print(game_world.all_objects())
+        # for i in game_world.all_objects():
+        #     print(i)
         game_world.add_collision_pairs(attack, None, 'attack:enimies')
 
     def get_bb(self):
@@ -330,6 +332,8 @@ class Nick:
     def handle_collision(self, other, group):
         if group == 'nick:enimies':
             game_world.remove_object(self)
+        if group == 'nick:map':
+            pass
 
 
 # def handle_events():

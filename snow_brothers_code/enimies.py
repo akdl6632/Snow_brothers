@@ -4,6 +4,7 @@ import game_world
 import random
 import play_state
 import map
+import nick
 
 PIXEL_PER_METER = (10.0 / 0.3)
 RedDemon_RUN_SPEED_KMPH = 30.0
@@ -15,13 +16,21 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
+# RedDemon_Xpos = [75, 55, 215, 75, 180]
+RedDemon_Xpos = [[375, 275, 1075, 375, 900], [None], []]
+RedDemon_Ypos = [[260, 420, 420, 580, 580], [None], []]
+RedDemon_dir = [[-1, 1, -1, 1, -1], [None], []]
+
 class RedDemon:
-    def __init__(self):
+    def __init__(self, i):
         # self.x, self.y = 640, 100 #825
         # self.x, self.y = x, y #825
-        self.x, self.y = random.randint(325, 960) , 100 #825
+        # self.x, self.y = random.randint(325, 960) , 100 #825
+        self.x, self.y = RedDemon_Xpos[play_state.stage - 1][i], RedDemon_Ypos[play_state.stage - 1][i]
+        print(self.x)
         self.frame = 0
-        self.dir, self.face_dir = 1, 1
+        # self.dir, self.face_dir = 1, 1
+        self.dir, self.face_dir = RedDemon_dir[play_state.stage - 1][i], RedDemon_dir[play_state.stage - 1][i]
         self.ver = 0
         self.jump = 0
         self.attack = 0
@@ -33,12 +42,12 @@ class RedDemon:
         # self.x += self.dir * 1
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         self.x += self.dir * RedDemon_RUN_SPEED_PPS * game_framework.frame_time
-        if self.x > 960:
-            self.x = 960
+        if self.x > 1280:
+            self.x = 1280
             self.dir = -1
             self.face_dir = -1
-        elif self.x < 325:
-            self.x = 325
+        elif self.x < 0:
+            self.x = 0
             self.dir = 1
             self.face_dir = 1
         # self.x = clamp(325, self.x, 960)
@@ -72,10 +81,14 @@ class RedDemon:
     def get_bb(self):
         return self.x - 30, self.y - 33, self.x + 30, self.y + 33
 
+Frog_Xpos = [[None], [375, 275, 1075, 375, 900], []]
+Frog_Ypos = [[None], [260, 420, 420, 580, 580], []]
+Frog_dir = [[None], [-1, 1, -1, 1, -1], []]
+
 class Frog:
-    def __init__(self):
+    def __init__(self, i):
         # self.x, self.y = 640, 100 #825
-        self.x, self.y = random.randint(325, 960) , 100 #825
+        self.x, self.y = Frog_Xpos[play_state.stage - 1][i], Frog_Ypos[play_state.stage - 1][i]
         self.frame = 0
         self.dir, self.face_dir = 1, 1
         self.ver = 0

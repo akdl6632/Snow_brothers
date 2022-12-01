@@ -6,6 +6,7 @@ import game_world
 
 from nick import Nick
 from map import Map
+from map import Block
 from enimies import RedDemon
 from enimies import Frog
 from enimies import Yellow_Troll
@@ -22,6 +23,7 @@ RedDemons = []
 Frogs = []
 Yellow_Trolls = []
 Boss = []
+Blocks = []
 
 
 RedDemonlist = dict()
@@ -40,6 +42,8 @@ All_enimes = {1: 5, 2: 5, 3: 6, 4: 5, 5: 7, 6: 7, 7: 6, 8: 8, 9: 6, 10: 0}
 Bosslist = dict()
 Bosslist = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1}
 
+Blocks = dict()
+Blocklist = {1: 8, 2: 9, 3: 15, 4: 12, 5: 17, 6: 12, 7: 14, 8: 11, 9: 13, 10: 5}
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
@@ -58,20 +62,26 @@ def handle_events():
 
 # 초기화
 def enter():
+    global Nick_kill
+    global RedDemons, Frogs, Yellow_Trolls, Boss
+    global Blocks
+    global stage
+
     global nick, map
     nick = Nick()
     map = Map()
     game_world.add_object(map, 0)
     game_world.add_object(nick, 1)
-    global Nick_kill
-    global RedDemons, Frogs, Yellow_Trolls, Boss
-    global stage
+
     Nick_kill = 0
-    # RedDemons = [RedDemon() for i in range(10)]
-    RedDemons = [RedDemon() for i in range(RedDemonlist[stage])]
+
+    Blocks = [Block(i) for i in range(Blocklist[stage])]
+    game_world.add_objects(Blocks, 1)
+
+    RedDemons = [RedDemon(i) for i in range(RedDemonlist[stage])]
     game_world.add_objects(RedDemons, 1)
 
-    Frogs = [Frog() for i in range(Froglist[stage])]
+    Frogs = [Frog(i) for i in range(Froglist[stage])]
     game_world.add_objects(Frogs, 1)
 
     Yellow_Trolls = [Yellow_Troll() for i in range(Yellow_Trolllist[stage])]
@@ -85,6 +95,7 @@ def enter():
     game_world.add_collision_pairs(None, Frogs, 'attack:enimies')
     game_world.add_collision_pairs(None, Yellow_Trolls, 'attack:enimies')
     game_world.add_collision_pairs(None, Boss, 'attack:bosses')
+    game_world.add_collision_pairs(nick, Blocks, 'nick:map')
 
 # 종료
 def exit():
@@ -97,8 +108,8 @@ def update():
 
     for a, b, group in game_world.all_collision_pairs():
         if collide(a, b):
-            print('COLLISION ', group)
-            print(a, b, group)
+            # print('COLLISION ', group)
+            # print(a, b, group)
             a.handle_collision(b, group)
             b.handle_collision(a, group)
 

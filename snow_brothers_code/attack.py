@@ -37,6 +37,7 @@ class Attack:
             # print('삭제')
             game_world.remove_object(self)
 
+
     def draw(self):
         if self.face_dir == -1:
             if int(self.frame) == 0:
