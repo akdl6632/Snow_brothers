@@ -31,10 +31,10 @@ RedDemonlist = dict()
 RedDemonlist = {1: 5, 2: 0, 3: 4, 4: 0, 5: 4, 6: 2, 7: 6, 8: 4, 9: 2}
 
 Froglist = dict()
-Froglist = {1: 0, 2: 4, 3: 0, 4: 3, 5: 1, 6: 1, 7: 0, 8: 2, 9: 2, 10: 0}
+Froglist = {1: 0, 2: 1, 3: 2, 4: 2, 5: 2, 6: 4, 7: 0, 8: 2, 9: 2, 10: 0}
 
 Yellow_Trolllist = dict()
-Yellow_Trolllist = {1: 0, 2: 1, 3: 2, 4: 2, 5: 2, 6: 4, 7: 0, 8: 2, 9: 2, 10: 0}
+Yellow_Trolllist = {1: 0, 2: 4, 3: 0, 4: 3, 5: 1, 6: 1, 7: 0, 8: 2, 9: 2, 10: 0}
 
 All_enimes = dict()
 All_enimes = {1: 5, 2: 5, 3: 6, 4: 5, 5: 7, 6: 7, 7: 6, 8: 8, 9: 6, 10: 0}
@@ -43,7 +43,7 @@ Bosslist = dict()
 Bosslist = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1}
 
 Blocks = dict()
-Blocklist = {1: 8, 2: 9, 3: 15, 4: 12, 5: 17, 6: 12, 7: 14, 8: 11, 9: 13, 10: 5}
+Blocklist = {1: 8, 2: 9, 3: 15, 4: 8, 5: 11, 6: 12, 7: 14, 8: 9, 9: 11, 10: 5}
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
@@ -84,7 +84,7 @@ def enter():
     Frogs = [Frog(i) for i in range(Froglist[stage])]
     game_world.add_objects(Frogs, 1)
 
-    Yellow_Trolls = [Yellow_Troll() for i in range(Yellow_Trolllist[stage])]
+    Yellow_Trolls = [Yellow_Troll(i) for i in range(Yellow_Trolllist[stage])]
     game_world.add_objects(Yellow_Trolls, 1)
 
     Boss = [Boss2() for i in range(Bosslist[stage])]

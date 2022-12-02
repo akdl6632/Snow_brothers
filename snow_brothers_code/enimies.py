@@ -17,9 +17,36 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
 # RedDemon_Xpos = [75, 55, 215, 75, 180]
-RedDemon_Xpos = [[375, 275, 1075, 375, 900], [None], []]
-RedDemon_Ypos = [[260, 420, 420, 580, 580], [None], []]
-RedDemon_dir = [[-1, 1, -1, 1, -1], [None], []]
+RedDemon_Xpos = [[375, 275, 1075, 375, 900],
+                 [None],
+                 [125, 1175, 325, 975],
+                 [None],
+                 [85, 160, 15, 245],
+                 [15, 235],
+                 [75, 165, 235, 50, 45, 170],
+                 [10, 240, 70, 185],
+                 [65, 195],
+                 [None]]
+RedDemon_Ypos = [[260, 420, 420, 580, 580],
+                 [None],
+                 [260, 260, 580, 580],
+                 [None],
+                 [260, 260, 420, 420],
+                 [420, 420],
+                 [260, 260, 340, 740, 905, 905],
+                 [260, 260, 825, 825],
+                 [260, 260],
+                 [None]]
+RedDemon_dir = [[-1, 1, -1, 1, -1],
+                [None],
+                [1, -1, 1, -1],
+                [None],
+                [-1, 1, 1, -1],
+                [1, -1],
+                [-1, -1, 1, 1, 1, 1],
+                [1, -1, -1, 1],
+                [1, -1],
+                [None]]
 
 class RedDemon:
     def __init__(self, i):
@@ -77,20 +104,48 @@ class RedDemon:
                 play_state.stage += 1
                 print(f'stage is {play_state.stage}')
                 map.map_y += 224
+                play_state.nick.x ,play_state.nick.y = 100, 100
                 game_framework.change_state(play_state)
     def get_bb(self):
         return self.x - 30, self.y - 33, self.x + 30, self.y + 33
 
-Frog_Xpos = [[None], [375, 275, 1075, 375, 900], []]
-Frog_Ypos = [[None], [260, 420, 420, 580, 580], []]
-Frog_dir = [[None], [-1, 1, -1, 1, -1], []]
+Frog_Xpos = [[None],
+             [495],
+             [75, 1200],
+             [55, 205],
+             [80, 175],
+             [90, 175, 115, 145],
+             [None],
+             [40, 210],
+             [None],
+             [None]]
+Frog_Ypos = [[None],
+             [745],
+             [740, 740],
+             [260, 260],
+             [740, 740],
+             [580, 580, 905, 905],
+             [None],
+             [580, 580],
+             [None],
+             [None]]
+Frog_dir = [[None],
+            [-1],
+            [-1, -1],
+            [1, -1],
+            [-1, 1],
+            [1, -1, -1, 1],
+            [None],
+            [-1, 1],
+            [None],
+            [None]]
 
 class Frog:
     def __init__(self, i):
         # self.x, self.y = 640, 100 #825
         self.x, self.y = Frog_Xpos[play_state.stage - 1][i], Frog_Ypos[play_state.stage - 1][i]
         self.frame = 0
-        self.dir, self.face_dir = 1, 1
+        self.dir, self.face_dir = Frog_dir[play_state.stage -1][i], Frog_dir[play_state.stage -1][i]
         self.ver = 0
         self.jump = 0
         self.attack = 0
@@ -102,12 +157,12 @@ class Frog:
         # self.x += self.dir * 1
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         self.x += self.dir * RedDemon_RUN_SPEED_PPS * game_framework.frame_time
-        if self.x > 960:
-            self.x = 960
+        if self.x > 1280:
+            self.x = 1280
             self.dir = -1
             self.face_dir = -1
-        elif self.x < 325:
-            self.x = 325
+        elif self.x < 0:
+            self.x = 0
             self.dir = 1
             self.face_dir = 1
         # self.x = clamp(325, self.x, 960)
@@ -137,15 +192,47 @@ class Frog:
                 play_state.stage += 1
                 print(f'stage is {play_state.stage}')
                 map.map_y += 224
+                play_state.nick.x ,play_state.nick.y = 100, 100
                 game_framework.change_state(play_state)
     def get_bb(self):
         return self.x - 19, self.y - 33, self.x + 19, self.y + 33
 
+
+Yellow_Troll_Xpos = [[None],
+                     [375, 925, 350, 650],
+                     [None],
+                     [195, 75, 125],
+                     [130],
+                     [130],
+                     [None],
+                     [130],
+                     [40, 130],
+                     [None]]
+Yellow_Troll_Ypos = [[None],
+                     [265, 425, 910, 910],
+                     [None],
+                     [380, 740, 905],
+                     [905],
+                     [260],
+                     [None],
+                     [905],
+                     [120, 740],
+                     [None]]
+Yellow_Troll_dir = [[None],
+                    [1, -1, 1, 1],
+                    [None],
+                    [1, 1, 1],
+                    [1],
+                    [1],
+                    [None],
+                    [1],
+                    [1, 1],
+                    [None]]
 class Yellow_Troll:
-    def __init__(self):
-        self.x, self.y = random.randint(325, 960) , 100 #825
+    def __init__(self, i):
+        self.x, self.y = Yellow_Troll_Xpos[play_state.stage - 1][i], Yellow_Troll_Ypos[play_state.stage - 1][i]
         self.frame = 0
-        self.dir, self.face_dir = 1, 1
+        self.dir, self.face_dir = Yellow_Troll_dir[play_state.stage -1][i], Yellow_Troll_dir[play_state.stage -1][i]
         self.ver = 0
         self.jump = 0
         self.attack = 0
@@ -155,12 +242,12 @@ class Yellow_Troll:
     def update(self):
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         self.x += self.dir * RedDemon_RUN_SPEED_PPS * game_framework.frame_time
-        if self.x > 960:
-            self.x = 960
+        if self.x > 1280:
+            self.x = 1280
             self.dir = -1
             self.face_dir = -1
-        elif self.x < 325:
-            self.x = 325
+        elif self.x < 0:
+            self.x = 0
             self.dir = 1
             self.face_dir = 1
         # self.x = clamp(325, self.x, 960)
@@ -190,6 +277,7 @@ class Yellow_Troll:
                 play_state.stage += 1
                 print(f'stage is {play_state.stage}')
                 map.map_y += 224
+                play_state.nick.x ,play_state.nick.y = 100, 100
                 game_framework.change_state(play_state)
     def get_bb(self):
         return self.x - 30, self.y - 33, self.x + 30, self.y + 33

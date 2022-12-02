@@ -270,7 +270,7 @@ next_state = {
 
 class Nick:
     def __init__(self):
-        self.x, self.y = 0, 100
+        self.x, self.y = 100, 100
         self.frame = 0
         self.dir, self.face_dir = 0, 1
         self.image = load_image('Nick.png')
