@@ -19,7 +19,7 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
-JUMP_SPEED_KMPH = 20.0
+JUMP_SPEED_KMPH = 40.0
 JUMP_SPEED_MPM = (JUMP_SPEED_KMPH * 1000.0 / 60.0)
 JUMP_SPEED_MPS = (JUMP_SPEED_MPM / 60.0)
 JUMP_SPEED_PPS = (JUMP_SPEED_MPS * PIXEL_PER_METER)
@@ -231,13 +231,14 @@ class JUMP:
             # self.add_event(GO_RUN)
 
         if Is_JUMP: # 점프키가 눌렸다면 점프하게 구현
-            JUMP_Y += 0.5
+            JUMP_Y += 2.5
+
 
             self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 4
             if self.face_dir == 1:
-                self.y += 1 * RUN_SPEED_PPS * game_framework.frame_time
+                self.y += 1 * JUMP_SPEED_PPS * game_framework.frame_time
             elif self.face_dir == -1:
-                self.y -= -1 * RUN_SPEED_PPS * game_framework.frame_time
+                self.y -= -1 * JUMP_SPEED_PPS * game_framework.frame_time
 
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 3
         self.x += self.dir * RUN_SPEED_PPS * game_framework.frame_time
@@ -299,7 +300,7 @@ class Nick:
             Is_Meet_Wall = True
 
         if Is_Meet_Wall == False:
-            self.y -= 0.5
+            self.y -= 1.5
 
     def draw(self):
         self.cur_state.draw(self)

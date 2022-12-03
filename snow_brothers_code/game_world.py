@@ -46,11 +46,18 @@ def all_objects():
             yield o
 
 
+# def clear():
+#     for o in all_objects():
+#         del o
+#     for layer in objects:
+#         layer.clear()
+
 def clear():
-    for o in all_objects():
-        del o
-    for layer in objects:
-        layer.clear()
+    global objects
+    global collision_group
+
+    objects = [[] for _ in range(2)]
+    collision_group = dict()
 
 def add_collision_pairs(a, b, group):
 

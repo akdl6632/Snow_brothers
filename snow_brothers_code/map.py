@@ -1,6 +1,9 @@
 from pico2d import *
 import play_state
 import nick
+import enimies
+import game_framework
+import game_world
 
 MAP_WIDTH, MAP_HEIGHT = 256, 223
 MAP_SIZE = 5
@@ -80,7 +83,15 @@ class Block:
         return self.sx, self.y, self.ex, self.y
 
     def handle_collision(self, other, group):
+        global map_y
+
         if group == 'nick:map':
             if nick.Is_JUMP == False:
                 play_state.nick.y = self.y + 20
                 nick.Is_Meet_Wall = True
+
+        if group == 'RedDemon:map':
+            if enimies.R_Is_Meet_Wall == False:
+                enimies.RedDemon.y = self.y + 20
+                print(enimies.RedDemon.y)
+                enimies.R_Is_Meet_Wall = True

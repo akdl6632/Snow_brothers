@@ -62,6 +62,7 @@ def handle_events():
 
 # 초기화
 def enter():
+    game_world.clear()
     global Nick_kill
     global RedDemons, Frogs, Yellow_Trolls, Boss
     global Blocks
@@ -77,6 +78,7 @@ def enter():
 
     Blocks = [Block(i) for i in range(Blocklist[stage])]
     game_world.add_objects(Blocks, 1)
+
 
     RedDemons = [RedDemon(i) for i in range(RedDemonlist[stage])]
     game_world.add_objects(RedDemons, 1)
@@ -96,6 +98,10 @@ def enter():
     game_world.add_collision_pairs(None, Yellow_Trolls, 'attack:enimies')
     game_world.add_collision_pairs(None, Boss, 'attack:bosses')
     game_world.add_collision_pairs(nick, Blocks, 'nick:map')
+    game_world.add_collision_pairs(RedDemons, Blocks, 'RedDemon:map')
+    game_world.add_collision_pairs(Frogs, Blocks, 'Frog:map')
+    game_world.add_collision_pairs(Yellow_Trolls, Blocks, 'Yellow_Troll:map')
+    game_world.add_collision_pairs(None, Blocks, 'attack:map')
 
 # 종료
 def exit():

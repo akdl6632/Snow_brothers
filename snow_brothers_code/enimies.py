@@ -16,6 +16,10 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 3
 
+R_Is_Meet_Wall = False
+F_Is_Meet_Wall = True
+Y_Is_Meet_Wall = True
+
 # RedDemon_Xpos = [75, 55, 215, 75, 180]
 RedDemon_Xpos = [[375, 275, 1075, 375, 900],
                  [None],
@@ -64,9 +68,8 @@ class RedDemon:
         self.image = load_image('Enemies.png')
         self.hp = 1
 
+
     def update(self):
-        # self.frame = (self.frame + 1) % 2
-        # self.x += self.dir * 1
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 2
         self.x += self.dir * RedDemon_RUN_SPEED_PPS * game_framework.frame_time
         if self.x > 1280:
@@ -77,9 +80,18 @@ class RedDemon:
             self.x = 0
             self.dir = 1
             self.face_dir = 1
-        # self.x = clamp(325, self.x, 960)
-        # self.y += self.ver * 1
-        # self.y = clamp(100, self.y, MAP_HEIGHT * MAP_SIZE)
+
+        # global R_Is_Meet_Wall
+        #
+        # # print(R_Is_Meet_Wall)
+        #
+        # # R_Is_Meet_Wall = False
+        #
+        # if self.y < 100:
+        #     R_Is_Meet_Wall = True
+        #
+        # if R_Is_Meet_Wall == False:
+        #     self.y -= 1.5
 
     def draw(self):
         if self.dir == -1:
@@ -106,6 +118,12 @@ class RedDemon:
                 map.map_y += 224
                 play_state.nick.x ,play_state.nick.y = 100, 100
                 game_framework.change_state(play_state)
+
+        global R_Is_Meet_Wall
+
+        if group == 'RedDemon:map':
+            pass
+
     def get_bb(self):
         return self.x - 30, self.y - 33, self.x + 30, self.y + 33
 
@@ -197,7 +215,7 @@ class Frog:
     def get_bb(self):
         return self.x - 19, self.y - 33, self.x + 19, self.y + 33
 
-
+# stage 8 2 개임 1개만 만들어서 오류남
 Yellow_Troll_Xpos = [[None],
                      [375, 925, 350, 650],
                      [None],
@@ -205,7 +223,7 @@ Yellow_Troll_Xpos = [[None],
                      [130],
                      [130],
                      [None],
-                     [130],
+                     [130, 130],
                      [40, 130],
                      [None]]
 Yellow_Troll_Ypos = [[None],
@@ -215,7 +233,7 @@ Yellow_Troll_Ypos = [[None],
                      [905],
                      [260],
                      [None],
-                     [905],
+                     [260, 905],
                      [120, 740],
                      [None]]
 Yellow_Troll_dir = [[None],
@@ -225,7 +243,7 @@ Yellow_Troll_dir = [[None],
                     [1],
                     [1],
                     [None],
-                    [1],
+                    [-1, 1],
                     [1, 1],
                     [None]]
 class Yellow_Troll:

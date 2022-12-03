@@ -69,6 +69,9 @@ class Attack:
         if group == 'attack:enimies':
             game_world.remove_object(self)
 
+        if group == 'attack:map':
+            game_world.remove_object(self)
+
         if group == 'attack:bosses':
             if bosses.Boss2.self.hp <= 0:
                 game_world.remove_object(self)
